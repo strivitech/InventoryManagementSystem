@@ -6,7 +6,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 var keyVaultUrl = builder.Configuration["AzureKeyVault:VaultUrl"]!;
 
-builder.Configuration.AddAzureKeyVault(new Uri(keyVaultUrl), new DefaultAzureCredential());
+if (!string.IsNullOrWhiteSpace(keyVaultUrl) && builder.Environment.IsProduction())
+{
+    builder.Configuration.AddAzureKeyVault(new Uri(keyVaultUrl), new DefaultAzureCredential());
+}
 
 // Add services to the container.
 
