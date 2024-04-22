@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34407.89
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inventory.PostgresMigrationsApp", "Azure\Inventory.PostgresMigrationsApp\Inventory.PostgresMigrationsApp.csproj", "{BD56554B-6408-482F-B55F-69EC83097E0E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Azure", "Azure", "{E7ABC119-EFF1-4A62-BD4C-DF994686780B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Products.Functions", "Azure\Products.Functions\Products.Functions.csproj", "{596E54EC-6B41-4FFE-B5CC-4ADFD1E502DB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BD56554B-6408-482F-B55F-69EC83097E0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD56554B-6408-482F-B55F-69EC83097E0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD56554B-6408-482F-B55F-69EC83097E0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD56554B-6408-482F-B55F-69EC83097E0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{596E54EC-6B41-4FFE-B5CC-4ADFD1E502DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{596E54EC-6B41-4FFE-B5CC-4ADFD1E502DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{596E54EC-6B41-4FFE-B5CC-4ADFD1E502DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{596E54EC-6B41-4FFE-B5CC-4ADFD1E502DB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{596E54EC-6B41-4FFE-B5CC-4ADFD1E502DB} = {E7ABC119-EFF1-4A62-BD4C-DF994686780B}
+		{BD56554B-6408-482F-B55F-69EC83097E0E} = {E7ABC119-EFF1-4A62-BD4C-DF994686780B}
+	EndGlobalSection
+EndGlobal
