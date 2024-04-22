@@ -32,7 +32,8 @@ public class ProductsService(
         {
             Name = request.Name,
             Description = request.Description,
-            Price = request.Price
+            Price = request.Price,
+            Quantity = request.Quantity
         };
 
         var createResponse = await _productsRepository.CreateAsync(product);
@@ -57,7 +58,7 @@ public class ProductsService(
         var getResponse = await _productsRepository.GetAsync(request.Id);
 
         return getResponse.Match<ErrorOr<GetProductResponse>>(
-            p => new GetProductResponse(p.Id, p.Name, p.Description, p.Price),
+            p => new GetProductResponse(p.Id, p.Name, p.Description, p.Price, p.Quantity),
             error => error
         );
     }
@@ -70,7 +71,7 @@ public class ProductsService(
 
         return getAllResponse.Match<ErrorOr<GetAllProductsResponse>>(
             products => new GetAllProductsResponse(products.Select(p =>
-                new GetProductResponse(p.Id, p.Name, p.Description, p.Price)).ToList(), products.Count),
+                new GetProductResponse(p.Id, p.Name, p.Description, p.Price, p.Quantity)).ToList(), products.Count),
             error => error
         );
     }
@@ -97,6 +98,7 @@ public class ProductsService(
         product.Name = request.Name;
         product.Description = request.Description;
         product.Price = request.Price;
+        product.Quantity = request.Quantity;
 
         var updateResponse = await _productsRepository.UpdateAsync(product);
 
