@@ -39,7 +39,14 @@ var host = new HostBuilder()
         
         services.AddScoped<IProductsService, ProductsService>();
         services.AddScoped<IProductsRepository, ProductsRepository>();
+        services.Decorate<IProductsRepository, CachedProductsRepository>();
         services.AddScoped<IRequestValidator, RequestValidator>();
+        
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = context.Configuration["RedisCacheConfiguration"];
+            options.InstanceName = context.Configuration["RedisCacheInstanceName"];
+        });
     })
     .Build();
 
