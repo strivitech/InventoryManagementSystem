@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Inventory.PostgresMigrationsApp.Database.Migrations
 {
-    [DbContext(typeof(InventoryDbContext))]
+    [DbContext(typeof(ProductsDbContext))]
     [Migration("20240419202757_InitialMigration")]
     partial class InitialMigration
     {

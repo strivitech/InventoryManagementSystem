@@ -3,11 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.PostgresMigrationsApp.Database;
 
-public class InventoryDbContext : DbContext
+public class ProductsDbContext(DbContextOptions<ProductsDbContext> options) : DbContext(options)
 {
     public DbSet<Product> Products => Set<Product>();
-
-    public InventoryDbContext(DbContextOptions<InventoryDbContext> options) : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

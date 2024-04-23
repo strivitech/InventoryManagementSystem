@@ -1,11 +1,11 @@
 ﻿// Add new migration with name
-dotnet ef migrations add InitialMigration -c InventoryDbContext -o Database/Migrations
+dotnet ef migrations add InitialMigration -c ProductsDbContext -o Database/Migrations
 
 // Remove last migration. Note that you must be on old migration before remove the last one
-dotnet ef migrations remove -c InventoryDbContext
+dotnet ef migrations remove -c ProductsDbContext
 
 // Database update
-dotnet ef database update -c InventoryDbContext
+dotnet ef database update -c ProductsDbContext
 
 // Database update to specific migration
-dotnet ef database update MigrationSpecificName -c InventoryDbContext
+dotnet ef database update MigrationSpecificName -c ProductsDbContext
