@@ -18,5 +18,8 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.Property(p => p.Description)
             .IsRequired()
             .HasMaxLength(Constants.MaxProductDescriptionLength);
+        
+        builder.ToTable(t => t
+            .HasCheckConstraint("CK_Products_Quantity", "\"Quantity\" >= 0"));
     }
 }
