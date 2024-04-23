@@ -13,11 +13,11 @@ using Products.Functions.Validation;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
-    .ConfigureAppConfiguration((context, config) =>
+    .ConfigureAppConfiguration((_, config) =>
     {
         var azureKeyVaultUrl = Environment.GetEnvironmentVariable("AzureKeyVaultUrl");
 
-        if (!string.IsNullOrEmpty(azureKeyVaultUrl) && context.HostingEnvironment.IsProduction())
+        if (!string.IsNullOrEmpty(azureKeyVaultUrl))
         {
             config.AddAzureKeyVault(
                 new Uri(azureKeyVaultUrl),
