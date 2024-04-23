@@ -29,11 +29,11 @@ var host = new HostBuilder()
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
         
-        services.AddDbContext<InventoryDbContext>(options =>
+        services.AddDbContext<ProductsDbContext>(options =>
             options
                 .UseNpgsql(
-                    context.Configuration["InventoryPostgres"],
-                    optionsBuilder => optionsBuilder.MigrationsAssembly(typeof(InventoryDbContext).Assembly.FullName)));
+                    context.Configuration["ProductsPostgres"],
+                    optionsBuilder => optionsBuilder.MigrationsAssembly(typeof(ProductsDbContext).Assembly.FullName)));
         
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
         

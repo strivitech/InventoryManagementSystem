@@ -7,9 +7,9 @@ using Products.Functions.Domain;
 
 namespace Products.Functions.Repositories;
 
-public class ProductsRepository(InventoryDbContext dbContext, ILogger<ProductsRepository> logger) : IProductsRepository
+public class ProductsRepository(ProductsDbContext dbContext, ILogger<ProductsRepository> logger) : IProductsRepository
 {
-    private readonly InventoryDbContext _dbContext = dbContext;
+    private readonly ProductsDbContext _dbContext = dbContext;
     private readonly ILogger<ProductsRepository> _logger = logger;
 
     public async Task<ErrorOr<Guid>> CreateAsync(Product product)

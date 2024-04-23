@@ -18,11 +18,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<InventoryDbContext>(options =>
+builder.Services.AddDbContext<ProductsDbContext>(options =>
     options
         .UseNpgsql(
-            builder.Configuration["InventoryPostgres"],
-            optionsBuilder => optionsBuilder.MigrationsAssembly(typeof(InventoryDbContext).Assembly.FullName)));
+            builder.Configuration["ProductsPostgres"],
+            optionsBuilder => optionsBuilder.MigrationsAssembly(typeof(ProductsDbContext).Assembly.FullName)));
 
 var app = builder.Build();
 

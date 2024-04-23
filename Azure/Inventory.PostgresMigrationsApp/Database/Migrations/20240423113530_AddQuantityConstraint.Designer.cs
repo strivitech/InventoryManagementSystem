@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Inventory.PostgresMigrationsApp.Database.Migrations
 {
-    [DbContext(typeof(InventoryDbContext))]
+    [DbContext(typeof(ProductsDbContext))]
     [Migration("20240423113530_AddQuantityConstraint")]
     partial class AddQuantityConstraint
     {
