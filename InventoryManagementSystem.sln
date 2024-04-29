@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inventory.PostgresMigration
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Azure", "Azure", "{E7ABC119-EFF1-4A62-BD4C-DF994686780B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Products.Functions", "Azure\Products.Functions\Products.Functions.csproj", "{596E54EC-6B41-4FFE-B5CC-4ADFD1E502DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Products.Functions", "Azure\Products.Functions\Products.Functions.csproj", "{596E54EC-6B41-4FFE-B5CC-4ADFD1E502DB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.Functions", "Azure\Ordering.Functions\Ordering.Functions.csproj", "{DD974DFE-DA60-48D4-BE67-289F15ECE6DE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,12 +25,17 @@ Global
 		{596E54EC-6B41-4FFE-B5CC-4ADFD1E502DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{596E54EC-6B41-4FFE-B5CC-4ADFD1E502DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{596E54EC-6B41-4FFE-B5CC-4ADFD1E502DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD974DFE-DA60-48D4-BE67-289F15ECE6DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD974DFE-DA60-48D4-BE67-289F15ECE6DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD974DFE-DA60-48D4-BE67-289F15ECE6DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD974DFE-DA60-48D4-BE67-289F15ECE6DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{596E54EC-6B41-4FFE-B5CC-4ADFD1E502DB} = {E7ABC119-EFF1-4A62-BD4C-DF994686780B}
 		{BD56554B-6408-482F-B55F-69EC83097E0E} = {E7ABC119-EFF1-4A62-BD4C-DF994686780B}
+		{596E54EC-6B41-4FFE-B5CC-4ADFD1E502DB} = {E7ABC119-EFF1-4A62-BD4C-DF994686780B}
+		{DD974DFE-DA60-48D4-BE67-289F15ECE6DE} = {E7ABC119-EFF1-4A62-BD4C-DF994686780B}
 	EndGlobalSection
 EndGlobal

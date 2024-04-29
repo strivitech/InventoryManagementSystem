@@ -11,6 +11,8 @@ public interface IProductsService
 
     Task<ErrorOr<GetAllProductsResponse>> GetAllAsync();
     
+    Task<ErrorOr<GetProductOverviewsResponse>> GetProductOverviewsAsync(GetProductOverviewsRequest request);
+    
     Task<ErrorOr<Updated>> UpdateAsync(UpdateProductRequest request);
     
     Task<ErrorOr<Deleted>> DeleteAsync(DeleteProductRequest request);

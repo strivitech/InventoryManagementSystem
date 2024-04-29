@@ -1,7 +1,7 @@
 ﻿using ErrorOr;
 using Microsoft.Extensions.Logging;
+using Products.Functions.Common;
 using Products.Functions.Contracts;
-using Products.Functions.Domain;
 using Products.Functions.Repositories;
 using Products.Functions.Validation;
 
@@ -28,15 +28,7 @@ public class ProductsService(
             return validationErrors;
         }
 
-        var product = new Product
-        {
-            Name = request.Name,
-            Description = request.Description,
-            Price = request.Price,
-            Quantity = request.Quantity
-        };
-
-        var createResponse = await _productsRepository.CreateAsync(product);
+        var createResponse = await _productsRepository.CreateAsync(request.ToProduct());
         
         return createResponse.Match<ErrorOr<CreateProductResponse>>(
             id => new CreateProductResponse(id),
@@ -72,6 +64,26 @@ public class ProductsService(
         return getAllResponse.Match<ErrorOr<GetAllProductsResponse>>(
             products => new GetAllProductsResponse(products.Select(p =>
                 new GetProductResponse(p.Id, p.Name, p.Description, p.Price, p.Quantity)).ToList(), products.Count),
+            error => error
+        );
+    }
+
+    public async Task<ErrorOr<GetProductOverviewsResponse>> GetProductOverviewsAsync(GetProductOverviewsRequest request)
+    {
+        _logger.LogDebug("Getting product overviews");
+        
+        var validationErrors = _requestValidator.Validate(request);
+        
+        if (validationErrors.Any())
+        {
+            return validationErrors;
+        }
+
+        var getProductOverviewsResponse = await _productsRepository.GetAsync(request.ProductIds);
+
+        return getProductOverviewsResponse.Match<ErrorOr<GetProductOverviewsResponse>>(
+            products => new GetProductOverviewsResponse(products.Select(p =>
+                new ProductOverviewDto(p.Id, p.Price, p.Quantity)).ToList()),
             error => error
         );
     }

@@ -52,6 +52,52 @@ public class CachedProductsRepository(IProductsRepository productsRepository, ID
         );
     }
 
+    public async Task<ErrorOr<List<Product>>> GetAsync(List<Guid> ids)
+    {
+        var products = new List<Product>();
+        var missingIds = new List<Guid>();
+
+        foreach (var id in ids)
+        {
+            string cacheKey = CacheKeys.ProductKey(id);
+            var cachedProduct = await _cache.GetStringAsync(cacheKey);
+            if (!string.IsNullOrEmpty(cachedProduct))
+            {
+                products.Add(JsonSerializer.Deserialize<Product>(cachedProduct)!);
+            }
+            else
+            {
+                missingIds.Add(id);
+            }
+        }
+
+        if (missingIds.Any())
+        {
+            var getResponse = await _productsRepository.GetAsync(missingIds);
+
+            return await getResponse.MatchAsync<ErrorOr<List<Product>>>(
+                async newProducts =>
+                {
+                    foreach (var product in newProducts)
+                    {
+                        string cacheKey = CacheKeys.ProductKey(product.Id);
+                        await _cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(product),
+                            new DistributedCacheEntryOptions
+                            {
+                                AbsoluteExpirationRelativeToNow = _cacheLifetime
+                            });
+                    }
+
+                    products.AddRange(newProducts);
+                    return products;
+                },
+                errors => Task.FromResult<ErrorOr<List<Product>>>(errors)
+            );
+        }
+
+        return products;
+    }
+
     public async Task<ErrorOr<List<Product>>> GetAllAsync()
     {
         string cacheKey = CacheKeys.AllProductsKey;

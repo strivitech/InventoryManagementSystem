@@ -8,10 +8,14 @@ using TakeFromBody = Microsoft.Azure.Functions.Worker.Http.FromBodyAttribute;
 
 namespace Products.Functions;
 
-public class FunctionHandlers(ILogger<FunctionHandlers> logger, IProductsService productsService)
+public class FunctionHandlers(
+    ILogger<FunctionHandlers> logger,
+    IProductsService productsService,
+    IWarehouseService warehouseService)
 {
     private readonly ILogger<FunctionHandlers> _logger = logger;
     private readonly IProductsService _productsService = productsService;
+    private readonly IWarehouseService _warehouseService = warehouseService;
 
     [Function("CreateProduct")]
     public async Task<IActionResult> CreateProductAsync(
@@ -45,6 +49,26 @@ public class FunctionHandlers(ILogger<FunctionHandlers> logger, IProductsService
         );
     }
 
+    [Function("GetProductOverviews")]
+    public async Task<IActionResult> GetProductOverviewsAsync(
+        [HttpTrigger(AuthorizationLevel.Function, "get")]
+        HttpRequest req)
+    {
+        _logger.LogDebug("GetProductOverviews HTTP Get trigger function started processing a request");
+
+        var listOfIds = req.Query[nameof(GetProductOverviewsRequest.ProductIds)].Select(Guid.Parse!).ToList();
+
+        var getOverviewsResponse =
+            await _productsService.GetProductOverviewsAsync(new GetProductOverviewsRequest(listOfIds));
+
+        return getOverviewsResponse.Match<IActionResult>(
+            overviews => overviews.ProductOverviews.Any()
+                ? new OkObjectResult(overviews)
+                : new EmptyResult(),
+            errors => new BadRequestObjectResult(errors)
+        );
+    }
+
     [Function("GetAllProducts")]
     public async Task<IActionResult> GetAllProductsAsync(
         [HttpTrigger(AuthorizationLevel.Function, "get")]
@@ -55,12 +79,14 @@ public class FunctionHandlers(ILogger<FunctionHandlers> logger, IProductsService
         var getAllResponse = await _productsService.GetAllAsync();
 
         return getAllResponse.Match<IActionResult>(
-            productsResponse => productsResponse.Products.Any() ? new OkObjectResult(productsResponse) : new
-                EmptyResult(),
+            productsResponse => productsResponse.Products.Any()
+                ? new OkObjectResult(productsResponse)
+                : new
+                    EmptyResult(),
             _ => new NotFoundResult()
         );
     }
-    
+
     [Function("UpdateProduct")]
     public async Task<IActionResult> UpdateProductAsync(
         [HttpTrigger(AuthorizationLevel.Function, "put")] [TakeFromBody]
@@ -82,12 +108,42 @@ public class FunctionHandlers(ILogger<FunctionHandlers> logger, IProductsService
         HttpRequest req, string id)
     {
         var request = new DeleteProductRequest(Guid.Parse(id));
-        
+
         _logger.LogDebug("DeleteProduct HTTP Delete trigger function started processing a request");
 
         var deleteResponse = await _productsService.DeleteAsync(request);
 
         return deleteResponse.Match<IActionResult>(
+            _ => new OkResult(),
+            errors => new BadRequestObjectResult(errors)
+        );
+    }
+
+    [Function("ReserveProducts")]
+    public async Task<IActionResult> ReserveProductsAsync(
+        [HttpTrigger(AuthorizationLevel.Function, "post")] [TakeFromBody]
+        ReserveProductsRequest request)
+    {
+        _logger.LogDebug("ReserveProducts HTTP Post trigger function started processing a request");
+
+        var reserveResponse = await _warehouseService.ReserveProductsAsync(request);
+
+        return reserveResponse.Match<IActionResult>(
+            _ => new OkResult(),
+            errors => new BadRequestObjectResult(errors)
+        );
+    }
+
+    [Function("ReleaseProducts")]
+    public async Task<IActionResult> ReleaseProductsAsync(
+        [HttpTrigger(AuthorizationLevel.Function, "post")] [TakeFromBody]
+        ReleaseProductsRequest request)
+    {
+        _logger.LogDebug("ReleaseProducts HTTP Post trigger function started processing a request");
+
+        var releaseResponse = await _warehouseService.ReleaseProductsAsync(request);
+
+        return releaseResponse.Match<IActionResult>(
             _ => new OkResult(),
             errors => new BadRequestObjectResult(errors)
         );

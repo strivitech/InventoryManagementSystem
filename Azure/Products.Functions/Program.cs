@@ -41,6 +41,8 @@ var host = new HostBuilder()
         services.AddScoped<IProductsRepository, ProductsRepository>();
         services.Decorate<IProductsRepository, CachedProductsRepository>();
         services.AddScoped<IRequestValidator, RequestValidator>();
+        services.AddScoped<IWarehouseRepository, WarehouseRepository>();
+        services.AddScoped<IWarehouseService, WarehouseService>();
         
         services.AddStackExchangeRedisCache(options =>
         {
