@@ -24,7 +24,7 @@ public class ProductsRepository(ProductsDbContext dbContext, ILogger<ProductsRep
         catch (DbUpdateException ex)
         {
             _logger.LogError(ex, "Failed to create note");
-            return Errors.Product.CreateFailed(product.Id);
+            return Errors.Product.CreateFailed();
         }
     }
 
@@ -40,6 +40,20 @@ public class ProductsRepository(ProductsDbContext dbContext, ILogger<ProductsRep
         _logger.LogDebug("Found product with id {Id}", id);
 
         return product;
+    }
+
+    public async Task<ErrorOr<List<Product>>> GetAsync(List<Guid> ids)
+    {
+        var products = await _dbContext.Products.Where(p => ids.Contains(p.Id)).ToListAsync();
+
+        if (products.Count != ids.Count)
+        {
+            var missingIds = ids.Except(products.Select(p => p.Id)).ToList();
+            _logger.LogWarning("Missing products with ids {Ids}", missingIds);
+            return Errors.Product.NotFound(missingIds);
+        }
+
+        return products;
     }
 
     public async Task<ErrorOr<List<Product>>> GetAllAsync() => await _dbContext.Products.ToListAsync();
