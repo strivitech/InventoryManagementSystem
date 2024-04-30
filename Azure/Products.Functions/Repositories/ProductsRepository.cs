@@ -32,14 +32,7 @@ public class ProductsRepository(ProductsDbContext dbContext, ILogger<ProductsRep
     {
         var product = await _dbContext.Products.FindAsync(id);
 
-        if (product is null)
-        {
-            return Errors.Product.NotFound(id);
-        }
-        
-        _logger.LogDebug("Found product with id {Id}", id);
-
-        return product;
+        return product is null ? Errors.Product.NotFound(id) : product;
     }
 
     public async Task<ErrorOr<List<Product>>> GetAsync(List<Guid> ids)
@@ -49,7 +42,7 @@ public class ProductsRepository(ProductsDbContext dbContext, ILogger<ProductsRep
         if (products.Count != ids.Count)
         {
             var missingIds = ids.Except(products.Select(p => p.Id)).ToList();
-            _logger.LogWarning("Missing products with ids {Ids}", missingIds);
+            _logger.LogError("Missing products with ids {Ids}", missingIds);
             return Errors.Product.NotFound(missingIds);
         }
 
@@ -64,6 +57,9 @@ public class ProductsRepository(ProductsDbContext dbContext, ILogger<ProductsRep
         {
             _dbContext.Products.Update(product);
             await _dbContext.SaveChangesAsync();
+            
+            _logger.LogInformation("Updated product with id {Id}", product.Id);
+            
             return new Updated();
         }
         catch (DbUpdateException ex)
@@ -87,6 +83,9 @@ public class ProductsRepository(ProductsDbContext dbContext, ILogger<ProductsRep
         try
         {
             await _dbContext.SaveChangesAsync();
+            
+            _logger.LogInformation("Deleted product with id {Id}", id);
+            
             return new Deleted();
         }
         catch (DbUpdateException ex)

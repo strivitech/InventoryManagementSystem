@@ -34,6 +34,9 @@ public class WarehouseRepository(ProductsDbContext dbContext, ILogger<WarehouseR
         try
         {
             await _dbContext.SaveChangesAsync();
+            
+            _logger.LogInformation("Products Quantities {ProductQuantities} reserved successfully",
+                productQuantities);
         }
         catch (DbUpdateException ex)
         {
@@ -60,6 +63,9 @@ public class WarehouseRepository(ProductsDbContext dbContext, ILogger<WarehouseR
         try
         {
             await _dbContext.SaveChangesAsync();
+            
+            _logger.LogInformation("Products Quantities {ProductQuantities} released successfully",
+                productQuantities);
         }
         catch (DbUpdateException ex)
         {

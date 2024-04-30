@@ -26,12 +26,7 @@ public class WarehouseService(
                 .Select(pqd => pqd.ToProductQuantity()).ToList()));
 
         return reserveProductsResult.Match<ErrorOr<Success>>(
-            _ =>    
-            {
-                _logger.LogInformation("Products Quantities {ProductQuantities} reserved successfully",
-                    request.ProductQuantities);
-                return new Success();
-            },
+            _ => new Success(),
             error => error
         );
     }
@@ -45,12 +40,7 @@ public class WarehouseService(
                 .Select(pqd => pqd.ToProductQuantity()).ToList()));
 
         return releaseProductsResult.Match<ErrorOr<Success>>(
-            _ =>    
-            {
-                _logger.LogInformation("Products Quantities {ProductQuantities} released successfully",
-                    request.ProductQuantities);
-                return new Success();
-            },
+            _ => new Success(),
             error => error
         );
     }

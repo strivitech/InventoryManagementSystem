@@ -27,7 +27,7 @@ public class OrderingService(
         return createResult.Match<ErrorOr<ProcessOrderResponse>>(
             orderId =>
             {
-                _logger.LogInformation("Order created with id {OrderId}", orderId);
+                _logger.LogInformation("Order with id {OrderId} processed", orderId);
                 return new ProcessOrderResponse(orderId);
             },
             error => error
