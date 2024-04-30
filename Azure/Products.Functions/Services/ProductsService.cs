@@ -21,16 +21,10 @@ public class ProductsService(
     {
         _logger.LogDebug("Creating product with name {Name}", request.Name);
 
-        var validationErrors = _requestValidator.Validate(request);
+        var createResult = await _requestValidator.Validate(request)
+            .ThenAsync(_ => _productsRepository.CreateAsync(request.ToProduct()));
 
-        if (validationErrors.Any())
-        {
-            return validationErrors;
-        }
-
-        var createResponse = await _productsRepository.CreateAsync(request.ToProduct());
-        
-        return createResponse.Match<ErrorOr<CreateProductResponse>>(
+        return createResult.Match<ErrorOr<CreateProductResponse>>(
             id => new CreateProductResponse(id),
             error => error
         );
@@ -40,16 +34,10 @@ public class ProductsService(
     {
         _logger.LogDebug("Getting product with id {Id}", request.Id);
 
-        var validationErrors = _requestValidator.Validate(request);
+        var getResult = await _requestValidator.Validate(request)
+            .ThenAsync(_ => _productsRepository.GetAsync(request.Id));
 
-        if (validationErrors.Any())
-        {
-            return validationErrors;
-        }
-
-        var getResponse = await _productsRepository.GetAsync(request.Id);
-
-        return getResponse.Match<ErrorOr<GetProductResponse>>(
+        return getResult.Match<ErrorOr<GetProductResponse>>(
             p => new GetProductResponse(p.Id, p.Name, p.Description, p.Price, p.Quantity),
             error => error
         );
@@ -59,9 +47,9 @@ public class ProductsService(
     {
         _logger.LogDebug("Getting all products");
 
-        var getAllResponse = await _productsRepository.GetAllAsync();
+        var getAllResult = await _productsRepository.GetAllAsync();
 
-        return getAllResponse.Match<ErrorOr<GetAllProductsResponse>>(
+        return getAllResult.Match<ErrorOr<GetAllProductsResponse>>(
             products => new GetAllProductsResponse(products.Select(p =>
                 new GetProductResponse(p.Id, p.Name, p.Description, p.Price, p.Quantity)).ToList(), products.Count),
             error => error
@@ -71,17 +59,11 @@ public class ProductsService(
     public async Task<ErrorOr<GetProductOverviewsResponse>> GetProductOverviewsAsync(GetProductOverviewsRequest request)
     {
         _logger.LogDebug("Getting product overviews");
-        
-        var validationErrors = _requestValidator.Validate(request);
-        
-        if (validationErrors.Any())
-        {
-            return validationErrors;
-        }
 
-        var getProductOverviewsResponse = await _productsRepository.GetAsync(request.ProductIds);
+        var getProductOverviewsResult = await _requestValidator.Validate(request)
+            .ThenAsync(_ => _productsRepository.GetAsync(request.ProductIds));
 
-        return getProductOverviewsResponse.Match<ErrorOr<GetProductOverviewsResponse>>(
+        return getProductOverviewsResult.Match<ErrorOr<GetProductOverviewsResponse>>(
             products => new GetProductOverviewsResponse(products.Select(p =>
                 new ProductOverviewDto(p.Id, p.Price, p.Quantity)).ToList()),
             error => error
@@ -92,57 +74,40 @@ public class ProductsService(
     {
         _logger.LogDebug("Updating product with id {Id}", request.Id);
 
-        var validationErrors = _requestValidator.Validate(request);
+        var updatedProduct = await _requestValidator.Validate(request)
+            .ThenAsync(_ => _productsRepository.GetAsync(request.Id))
+            .Then(request.ToProduct);
 
-        if (validationErrors.Any())
-        {
-            return validationErrors;
-        }
+        return await updatedProduct.MatchAsync(
+            async product =>
+            {
+                var updateResult = await _productsRepository.UpdateAsync(product);
 
-        var getResponse = await _productsRepository.GetAsync(request.Id);
-
-        if (getResponse.IsError)
-        {
-            return getResponse.Errors;
-        }
-
-        var product = getResponse.Value;
-        product.Name = request.Name;
-        product.Description = request.Description;
-        product.Price = request.Price;
-        product.Quantity = request.Quantity;
-
-        var updateResponse = await _productsRepository.UpdateAsync(product);
-
-        return updateResponse.Match<ErrorOr<Updated>>(
-            _ => new Updated(),
-            error => error
-        );
+                return updateResult.Match<ErrorOr<Updated>>(
+                    _ => new Updated(),
+                    error => error
+                );
+            },
+            error => Task.FromResult<ErrorOr<Updated>>(error));
     }
 
     public async Task<ErrorOr<Deleted>> DeleteAsync(DeleteProductRequest request)
     {
         _logger.LogDebug("Deleting product with id {Id}", request.Id);
 
-        var validationErrors = _requestValidator.Validate(request);
+        var getResult = await _requestValidator.Validate(request)
+            .ThenAsync(_ => _productsRepository.GetAsync(request.Id));
 
-        if (validationErrors.Any())
-        {
-            return validationErrors;
-        }
+        return await getResult.MatchAsync(
+            async product =>
+            {
+                var deleteResult = await _productsRepository.DeleteAsync(product.Id);
 
-        var getResponse = await _productsRepository.GetAsync(request.Id);
-
-        if (getResponse.IsError)
-        {
-            return getResponse.Errors;
-        }
-
-        var deleteResponse = await _productsRepository.DeleteAsync(getResponse.Value.Id);
-
-        return deleteResponse.Match<ErrorOr<Deleted>>(
-            _ => new Deleted(),
-            error => error
-        );
+                return deleteResult.Match<ErrorOr<Deleted>>(
+                    _ => new Deleted(),
+                    error => error
+                );
+            },
+            error => Task.FromResult<ErrorOr<Deleted>>(error));
     }
 }

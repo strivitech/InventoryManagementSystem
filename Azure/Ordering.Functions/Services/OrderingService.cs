@@ -21,19 +21,13 @@ public class OrderingService(
     {
         _logger.LogDebug("Creating order {@Order}", request);
 
-        var validationErrors = _requestValidator.Validate(request);
+        var createResult = await _requestValidator.Validate(request)
+            .ThenAsync(_ => _orderRepository.CreateAsync(request.ToOrder()));
 
-        if (validationErrors.Any())
-        {
-            return validationErrors;
-        }
-
-        var createOrderResult = await _orderRepository.CreateAsync(request.ToOrder());
-
-        return createOrderResult.Match<ErrorOr<ProcessOrderResponse>>(
+        return createResult.Match<ErrorOr<ProcessOrderResponse>>(
             orderId =>
             {
-                _logger.LogInformation("Order created with id {OrderId}", orderId);
+                _logger.LogInformation("Order with id {OrderId} processed", orderId);
                 return new ProcessOrderResponse(orderId);
             },
             error => error

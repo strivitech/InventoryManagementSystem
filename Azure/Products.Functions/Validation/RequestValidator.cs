@@ -10,32 +10,30 @@ public sealed class RequestValidator(IServiceProvider serviceProvider) : IReques
 {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
 
-    public List<Error> Validate<T>([NotNull]T model, [CallerArgumentExpression("model")] string? paramName = null)
+    public ErrorOr<Success> Validate<T>([NotNull] T model, [CallerArgumentExpression("model")] string? paramName = null)
     {
         ArgumentNullException.ThrowIfNull(model, paramName);
 
         var validationResult = DoValidation(model);
-        
+
         if (!validationResult.IsValid)
         {
-            var errors = validationResult.Errors.Select(x => Error.Validation(x.PropertyName, x.ErrorMessage)).ToList();
+            var errors = validationResult.Errors.ConvertAll(vf =>
+                Error.Validation(code: vf.PropertyName, description: vf.ErrorMessage));
             return errors;
         }
 
-        return [];
+        return new Success();
     }
 
-    private ValidationResult DoValidation<T>(T model)
-    {
-        var validator = GetValidator<T>();
+    private ValidationResult DoValidation<T>(T model) => GetValidator<T>().Validate(model);
 
-        return validator.Validate(model);
-    }
-    
     private IValidator<T> GetValidator<T>()
     {
         var validator = _serviceProvider.GetService(typeof(IValidator<T>)) as IValidator<T>;
 
-        return validator ?? throw new InvalidOperationException($"Validator for type {typeof(T).FullName} was not found. Check if it's already registered.");
+        return validator ??
+               throw new InvalidOperationException(
+                   $"Validator for type {typeof(T).FullName} was not found. Check if it's already registered.");
     }
 }

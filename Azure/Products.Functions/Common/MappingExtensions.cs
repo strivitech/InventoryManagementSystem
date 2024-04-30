@@ -15,6 +15,15 @@ public static class MappingExtensions
             Quantity = request.Quantity
         };
     }
+    
+    public static Product ToProduct(this UpdateProductRequest request, Product product)
+    {
+        product.Name = request.Name;
+        product.Description = request.Description;
+        product.Price = request.Price;
+        product.Quantity = request.Quantity;
+        return product;
+    }
 
     public static ProductQuantity ToProductQuantity(this ProductQuantityDto productQuantityDto) =>
         new(ProductId: productQuantityDto.ProductId, Quantity: productQuantityDto.Quantity);

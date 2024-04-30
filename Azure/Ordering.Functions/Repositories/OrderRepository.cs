@@ -23,9 +23,9 @@ public class OrderRepository : IOrderRepository
     {
         try
         {
-            ItemResponse<Order> response = await _container.CreateItemAsync(order, new PartitionKey(order.PartitionKey));
-            if (response.StatusCode != HttpStatusCode.Created)
-            {
+            ItemResponse<Order> createResponse = await _container.CreateItemAsync(order, new PartitionKey(order.PartitionKey));
+            if (createResponse.StatusCode != HttpStatusCode.Created)
+            {   
                 _logger.LogError("Failed to create order with id {OrderId}", order.Id);
                 return Errors.Order.CreateFailed();
             }
