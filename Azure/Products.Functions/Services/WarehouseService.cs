@@ -19,19 +19,14 @@ public class WarehouseService(
 
     public async Task<ErrorOr<Success>> ReserveProductsAsync(ReserveProductsRequest request)
     {
-        var validationErrors = _requestValidator.Validate(request);
+        _logger.LogDebug("Reserving products {@Request}", request);
 
-        if (validationErrors.Any())
-        {
-            return validationErrors;
-        }
-
-        var reserveProductsResult =
-            await _warehouseRepository.ReserveProductsAsync(request.ProductQuantities
-                .Select(pqd => pqd.ToProductQuantity()).ToList());
+        var reserveProductsResult = await _requestValidator.Validate(request)
+            .ThenAsync(_ => _warehouseRepository.ReserveProductsAsync(request.ProductQuantities
+                .Select(pqd => pqd.ToProductQuantity()).ToList()));
 
         return reserveProductsResult.Match<ErrorOr<Success>>(
-            success =>
+            _ =>    
             {
                 _logger.LogInformation("Products Quantities {ProductQuantities} reserved successfully",
                     request.ProductQuantities);
@@ -43,18 +38,14 @@ public class WarehouseService(
 
     public async Task<ErrorOr<Success>> ReleaseProductsAsync(ReleaseProductsRequest request)
     {
-        var validationErrors = _requestValidator.Validate(request);
+        _logger.LogDebug("Releasing products {@Request}", request);
 
-        if (validationErrors.Any())
-        {
-            return validationErrors;
-        }
-
-        var releaseProductsResult = await _warehouseRepository.ReleaseProductsAsync(request.ProductQuantities
-            .Select(pqd => pqd.ToProductQuantity()).ToList());
+        var releaseProductsResult = await _requestValidator.Validate(request)
+            .ThenAsync(_ => _warehouseRepository.ReleaseProductsAsync(request.ProductQuantities
+                .Select(pqd => pqd.ToProductQuantity()).ToList()));
 
         return releaseProductsResult.Match<ErrorOr<Success>>(
-            success =>
+            _ =>    
             {
                 _logger.LogInformation("Products Quantities {ProductQuantities} released successfully",
                     request.ProductQuantities);
