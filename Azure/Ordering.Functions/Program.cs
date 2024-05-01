@@ -31,7 +31,7 @@ var host = new HostBuilder()
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
 
-        services.AddSingleton(new CosmosClient(context.Configuration["Cosmos:ConnectionString"]!,
+        services.AddSingleton(new CosmosClient(context.Configuration["CosmosConnectionString"]!,
             new CosmosClientOptions
             {
                 SerializerOptions = new CosmosSerializationOptions
@@ -44,7 +44,7 @@ var host = new HostBuilder()
                 client => { client.BaseAddress = new Uri(context.Configuration["ProductsUrl"]!); })
             .AddHttpMessageHandler(b =>
                 new AddQueryParameterAuthorizationCodeHandler(
-                    context.Configuration["AuthorizationCodes:Products:GetProductOverviews"]!))
+                    context.Configuration["AuthorizationCodesProductsGetProductOverviews"]!))
             .AddTransientHttpErrorPolicy(
                 policyBuilder => policyBuilder.WaitAndRetryAsync(
                     Backoff.DecorrelatedJitterBackoffV2(TimeSpan.FromSeconds(RequestPolly.MedianFirstRetryDelaySeconds),
