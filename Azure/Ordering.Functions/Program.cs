@@ -1,7 +1,9 @@
 using System.Reflection;
+using Azure.Identity;
 using FluentValidation;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Ordering.Functions.Common;
@@ -13,6 +15,17 @@ using Polly.Contrib.WaitAndRetry;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
+    .ConfigureAppConfiguration((_, config) =>
+    {
+        var azureKeyVaultUrl = Environment.GetEnvironmentVariable("AzureKeyVaultUrl");
+
+        if (!string.IsNullOrEmpty(azureKeyVaultUrl))
+        {
+            config.AddAzureKeyVault(
+                new Uri(azureKeyVaultUrl),
+                new DefaultAzureCredential());
+        }
+    })
     .ConfigureServices((context, services) =>
     {
         services.AddApplicationInsightsTelemetryWorkerService();
