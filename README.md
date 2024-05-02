@@ -26,7 +26,7 @@ These functions support CRUD operations for product management and implement bus
 The Products.Functions, Ordering.Functions and their connections with Azure services are showed in the image below.
 Worth noting that Products.Functions operates with the use of Postgre + Redis cache, meanwhile Ordering.Functions utilizes CosmosDb to store information about orders. 
 
-![IMS-Azure](https://github.com/strivitech/InventoryManagementSystem/assets/111649007/d94c2f47-fe6c-4f76-be80-8b974f5b224a)
+![IMS-Azure](https://github.com/strivitech/InventoryManagementSystem/assets/111649007/10f13fad-2e02-4883-9696-25bc15333c05)
 
 ## Technologies Used
 - Azure Functions: Serverless computing service that lets you run event-triggered code without having to explicitly provision or manage infrastructure.
