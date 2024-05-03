@@ -167,7 +167,10 @@ Fill them in with next content:
 ```
 Replace necessary variables with your infrastructure values.
 
-### Step 6: Run both `Products.Functions` and `Ordering.Functions` projects
+### Step 6: Use migrations app to apply migrations on database.
+You can apply migrations locally by running `dotnet ef database update -c ProductsDbContext` from `Inventory.PostgresMigrationsApp` project.
+
+### Step 7: Run both `Products.Functions` and `Ordering.Functions` projects
 
 ## Manual Deployment through Azure Portal
 This section guides you through the process of deploying the Inventory Management System on Azure.
